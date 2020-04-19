@@ -15,6 +15,9 @@ namespace Mesa03.Models
 
         //segundo associações
         public Department Department { get; set; }            //associação com outra classe, de 1 pra 1
+        public int DepartmentId { get; set; }                 //associação criada para Chave estrangeira não Nula, ou seja...
+                                                              // ...ninguem conseguira criar um vendedor sem o Id do departamento dele...
+                                                              //...pois o tipo int criado no DB não permite campo nulo
 
         public ICollection<SalesRecord> Sales { get; set; }  //associação com outra classe, de 1 pra varios
 

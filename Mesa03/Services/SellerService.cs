@@ -38,6 +38,7 @@ namespace Mesa03.Services
         //metodo personalizado Insert
         public async Task InsertAsync(Seller seller)
         {
+            
             _context.Add(seller);
             await _context.SaveChangesAsync();
             /*criado pelo Nelio Alves
