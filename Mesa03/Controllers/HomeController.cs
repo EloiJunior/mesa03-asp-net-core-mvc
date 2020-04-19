@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Mesa03.Models;
+using Mesa03.Models.ViewModels;
 
 namespace Mesa03.Controllers
 {
