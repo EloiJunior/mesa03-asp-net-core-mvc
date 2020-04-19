@@ -35,7 +35,7 @@ namespace Mesa03.Controllers
         public async Task<IActionResult> Index()
         {
             /*metodo gerado pelo CRUD
-            return View(await _sellerService.Seller.ToListAsync());
+            return View(await _context.Seller.ToListAsync());
             */
 
             /*outra forma dada pelo Nelio Alves, sincrona
@@ -44,7 +44,7 @@ namespace Mesa03.Controllers
             */
 
             //forma atual do metodo
-            return View(await _sellerService.ToListAsync());
+            return View(await _sellerService.FindAllAsync());
 
         }
         /*
@@ -71,23 +71,26 @@ namespace Mesa03.Controllers
         {
             return View();
         }
-        */
+        
         // POST: Sellers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost] //precisamos colocar esse anotation pra indicar que a ação abaixo é de Post e não de Get
+        [ValidateAntiForgeryToken] //colocando outra anotação para impedir ataque CSRF: é quando alguem aproveita a seção de autenticação e coloca dados maliciosos
         public async Task<IActionResult> Create([Bind("Id,Name,Email,BirthDate,BaseSalary")] Seller seller)
         {
             if (ModelState.IsValid)
             {
+                /*passei a codificação abaixo criada pelo CRUD no controlador para o Serviço
                 _context.Add(seller);
                 await _context.SaveChangesAsync();
+                */
+                await _sellerService.InsertAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
             return View(seller);
         }
-
+        /*
         // GET: Sellers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

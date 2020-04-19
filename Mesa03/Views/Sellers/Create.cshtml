@@ -4,13 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
-<h2>Create</h2>
+<h2>@ViewData["Title"]</h2>  
 
 <h4>Seller</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+<div class="row"> <!--O class="row" garante que o div vai preencer a largura da minha tela-->
+    <div class="col-md-4"> <!-- esse class faz com que o div ocupe 1/3 da tela pois o html divide a tela em 12 partes-->
+        <form asp-action="Create"> <!--Quando enviar o formulario vai chamar a ação Create Post-->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
