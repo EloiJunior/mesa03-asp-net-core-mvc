@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Mesa03.Models;
+using Mesa03.Services; //para usar classe SellerService no registro do SellerService no sistema de injeção de dependencia
 
 namespace Mesa03
 {
@@ -38,6 +39,8 @@ namespace Mesa03
 
             services.AddDbContext<Mesa03Context>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("Mesa03Context")));
+
+            services.AddScoped<SellerService>(); //registrando serviço no sistema de injeção de dependencia
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

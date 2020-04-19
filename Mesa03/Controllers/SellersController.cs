@@ -4,26 +4,50 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;  //para usar o .ToListAsync() na expressão lambda
 using Mesa03.Models;
+using Mesa03.Services; //para usar SellerService
 
 namespace Mesa03.Controllers
 {
     public class SellersController : Controller
     {
+        /* Criado pelo CRUD, mas vamos mudar para o controller interagir somente com o Serviço, e o Serviço que irá interagir com o Banco de Dados
         private readonly Mesa03Context _context;
 
         public SellersController(Mesa03Context context)
         {
             _context = context;
         }
+        */
+
+        //declarar dependencia para o SellerService
+        private readonly SellerService _sellerService;
+
+        //construtor para ele injetar a dependencia
+        public SellersController(SellerService sellerService)
+        {
+            _sellerService = sellerService;
+        }
+
 
         // GET: Sellers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Seller.ToListAsync());
-        }
+            /*metodo gerado pelo CRUD
+            return View(await _sellerService.Seller.ToListAsync());
+            */
 
+            /*outra forma dada pelo Nelio Alves, sincrona
+             var list = _sellerService.FindAll();
+             return View(list);
+            */
+
+            //forma atual do metodo
+            return View(await _sellerService.ToListAsync());
+
+        }
+        /*
         // GET: Sellers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -32,7 +56,7 @@ namespace Mesa03.Controllers
                 return NotFound();
             }
 
-            var seller = await _context.Seller
+            var seller = await _sellerService.Seller
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (seller == null)
             {
@@ -41,13 +65,13 @@ namespace Mesa03.Controllers
 
             return View(seller);
         }
-
+        */
         // GET: Sellers/Create
         public IActionResult Create()
         {
             return View();
         }
-
+        */
         // POST: Sellers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -148,5 +172,6 @@ namespace Mesa03.Controllers
         {
             return _context.Seller.Any(e => e.Id == id);
         }
+        */
     }
 }
