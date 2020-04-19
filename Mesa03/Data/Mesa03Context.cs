@@ -13,6 +13,9 @@ namespace Mesa03.Models
         {
         }
 
-        public DbSet<Mesa03.Models.Department> Department { get; set; }
+        public DbSet<Department> Department { get; set; }
+        public DbSet<Seller> Seller { get; set; }            //pra que o Entity Framework reconheça a classe criada, eu preciso adicionar a classe como o DBSet
+        public DbSet<SalesRecord> SalesRecord { get; set; }
+
     }
 }
