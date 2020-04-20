@@ -41,6 +41,7 @@ namespace Mesa03
                     options.UseSqlServer(Configuration.GetConnectionString("Mesa03Context")));
 
             services.AddScoped<SellerService>(); //registrando serviço no sistema de injeção de dependencia
+            services.AddScoped<DepartmentService>(); //registrando serviço no sistema de injeção de dependencia
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

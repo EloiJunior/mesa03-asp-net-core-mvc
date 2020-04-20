@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;  //para usar o .ToListAsync() na expressão lambda
 using Mesa03.Models;
 using Mesa03.Services; //para usar SellerService
+using Mesa03.Models.ViewModels; //para usar o ViewModel SellerFormViewModel no Metodo Create Get
 
 namespace Mesa03.Controllers
 {
@@ -23,14 +24,17 @@ namespace Mesa03.Controllers
 
         //declarar dependencia para o SellerService
         private readonly SellerService _sellerService;
-
+        private readonly DepartmentService _departmentService;
         //construtor para ele injetar a dependencia
-        public SellersController(SellerService sellerService)
+        public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
+            _departmentService = departmentService;  // o _departmentService da classe, recebe o departmentService do argumento
         }
 
-
+        // metodos personalizados do CRUD e tambem criados
+        
+        //metodo personalizado Index
         // GET: Sellers
         public async Task<IActionResult> Index()
         {
@@ -48,6 +52,7 @@ namespace Mesa03.Controllers
 
         }
         /*
+         //metodo personalizado Details
         // GET: Sellers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -66,10 +71,14 @@ namespace Mesa03.Controllers
             return View(seller);
         }
         */
+
+        //Metodo personalizado Create Get
         // GET: Sellers/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var departments = await _departmentService.FindAllAsync();
+            var viewModel = new SellerFormViewModel { Departments = departments };
+            return View(viewModel);
         }
         
         // POST: Sellers/Create
@@ -77,7 +86,7 @@ namespace Mesa03.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost] //precisamos colocar esse anotation pra indicar que a ação abaixo é de Post e não de Get
         [ValidateAntiForgeryToken] //colocando outra anotação para impedir ataque CSRF: é quando alguem aproveita a seção de autenticação e coloca dados maliciosos
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,BirthDate,BaseSalary")] Seller seller)
+        public async Task<IActionResult> Create(/*[Bind("Id,Name,Email,BirthDate,BaseSalary,Department")]*/ Seller seller)
         {
             if (ModelState.IsValid)
             {
