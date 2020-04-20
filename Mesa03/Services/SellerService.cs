@@ -47,6 +47,21 @@ namespace Mesa03.Services
             */
         }
 
+        //metodo personalizado FindByIdAsync
+        public async Task<Seller> FindByIdAsync(int id)
+        {
+            return await _context.Seller.FirstOrDefaultAsync(seller => seller.Id == id);
+        }
+
+        //metodo personalizado RemoveAsync
+        public async Task RemoveAsync(int id)
+        {
+            var obj =  await _context.Seller.FindAsync(id);
+            _context.Seller.Remove(obj);
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 
 }

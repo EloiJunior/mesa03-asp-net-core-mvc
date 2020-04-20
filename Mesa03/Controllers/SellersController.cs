@@ -15,7 +15,6 @@ namespace Mesa03.Controllers
     {
         /* Criado pelo CRUD, mas vamos mudar para o controller interagir somente com o Serviço, e o Serviço que irá interagir com o Banco de Dados
         private readonly Mesa03Context _context;
-
         public SellersController(Mesa03Context context)
         {
             _context = context;
@@ -25,15 +24,19 @@ namespace Mesa03.Controllers
         //declarar dependencia para o SellerService
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
+
         //construtor para ele injetar a dependencia
         public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
             _departmentService = departmentService;  // o _departmentService da classe, recebe o departmentService do argumento
         }
+        //
+
 
         // metodos personalizados do CRUD e tambem criados
         
+
         //metodo personalizado Index
         // GET: Sellers
         public async Task<IActionResult> Index()
@@ -72,6 +75,7 @@ namespace Mesa03.Controllers
         }
         */
 
+
         //Metodo personalizado Create Get
         // GET: Sellers/Create
         public async Task<IActionResult> Create()
@@ -81,6 +85,7 @@ namespace Mesa03.Controllers
             return View(viewModel);
         }
         
+
         // POST: Sellers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -100,6 +105,8 @@ namespace Mesa03.Controllers
             return View(seller);
         }
         /*
+          
+         
         // GET: Sellers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -115,6 +122,8 @@ namespace Mesa03.Controllers
             }
             return View(seller);
         }
+
+
 
         // POST: Sellers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -150,6 +159,8 @@ namespace Mesa03.Controllers
             }
             return View(seller);
         }
+        */
+
 
         // GET: Sellers/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -159,9 +170,18 @@ namespace Mesa03.Controllers
                 return NotFound();
             }
 
+            //Feito pelo CRUD e alterado para serviço
+            /*
             var seller = await _context.Seller
                 .FirstOrDefaultAsync(m => m.Id == id);
+            */
+
+            //passando a codificação acima para o Serviço, e chamando a ação do serviço
+            var seller = await _sellerService.FindByIdAsync(id.Value);
+            //
+
             if (seller == null)
+
             {
                 return NotFound();
             }
@@ -169,17 +189,28 @@ namespace Mesa03.Controllers
             return View(seller);
         }
 
-        // POST: Sellers/Delete/5
+
+        
+        // POST: Sellers/Delete/6
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            /*
             var seller = await _context.Seller.FindAsync(id);
             _context.Seller.Remove(seller);
             await _context.SaveChangesAsync();
+            */
+
+            //passando a codificação acima para o Serviço, e chamando a ação do serviço
+            await _sellerService.RemoveAsync(id);
+            //
+
             return RedirectToAction(nameof(Index));
         }
 
+
+        /*
         private bool SellerExists(int id)
         {
             return _context.Seller.Any(e => e.Id == id);
