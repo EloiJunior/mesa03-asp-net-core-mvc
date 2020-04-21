@@ -108,7 +108,7 @@ namespace Mesa03.Controllers
         [ValidateAntiForgeryToken] //colocando outra anotação para impedir ataque CSRF: é quando alguem aproveita a seção de autenticação e coloca dados maliciosos
         public async Task<IActionResult> Create(/*[Bind("Id,Name,Email,BirthDate,BaseSalary,Department")]*/ Seller seller)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //para testar se o que veio na requisição é valido, ou seja que cumpriu todos os criterior de validação
             {
                 /*passei a codificação abaixo criada pelo CRUD no controlador para o Serviço
                 _context.Add(seller);
@@ -117,7 +117,11 @@ namespace Mesa03.Controllers
                 await _sellerService.InsertAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
-            return View(seller);
+            //return View(seller); // se o que veio na requisição não é validado volta pra view as informações que vieram para serem corrigidas
+            var departments = await _departmentService.FindAllAsync(); //como a view Edit exige viewModel, precisamos criar uma tabelinha de departamentos
+            var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments }; //e depois de criada a tabelinha de departments, geramos um SellerFormViewModel, com o seller trazido na requisição com a listinha de departamentos
+            return View(viewModel);  ////...já retorna pra view, o viewModel que acabamos de criar, com base na requisição mais a tabelinha de departmentos
+
         }
 
 
@@ -164,6 +168,14 @@ namespace Mesa03.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,/* [Bind("Id,Name,Email,BirthDate,BaseSalary")] */Seller seller)
         {
+            if (!ModelState.IsValid)  //outra forma de testar a validação antes de passar para as outras codificações, ou seja, se não for validado,...
+            {
+                //return View(seller); //como o View Edit espera um SellerFormViewModel, precisamos criar ele antes de devolver a requisição
+                var departments = await _departmentService.FindAllAsync(); //como a view Edit exige viewModel, precisamos criar uma tabelinha de departamentos
+                var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments }; //e depois de criada a tabelinha de departments, geramos um SellerFormViewModel, com o seller trazido na requisição com a listinha de departamentos
+                return View(viewModel);  ////...já retorna pra view, o viewModel que acabamos de criar, com base na requisição mais a tabelinha de departmentos
+            }
+
             if (id != seller.Id) //se o id que veio da requisição não for o mesmo Id do seller no DB
             {
                 /*veio do CRUD

@@ -10,13 +10,12 @@
 <hr />
 <div class="row"> <!--O class="row" garante que o div vai preencer a largura da minha tela-->
     <div class="col-md-4"> <!-- esse class faz com que o div ocupe 1/3 da tela pois o html divide a tela em 12 partes-->
-        <form asp-action="Create">
-            <!--Quando enviar o formulario vai chamar a ação Create Post-->
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Create">            <!--Quando enviar o formulario vai chamar a ação Create Post-->
+            <div asp-validation-summary="All" class="text-danger"></div> <!--pra fazer um sumario de validações das entradas, na ultima linha existe uma codificação para que esse sumario de validação apareça na tela do usuario-->
             <div class="form-group">
                 <label asp-for="Seller.Name" class="control-label"></label>
                 <input asp-for="Seller.Name" class="form-control" />
-                <span asp-validation-for="Seller.Name" class="text-danger"></span>
+                <span asp-validation-for="Seller.Name" class="text-danger"></span> <!--pra mostrar a validação no momento da digitação-->
             </div>
             <div class="form-group">
                 <label asp-for="Seller.Email" class="control-label"></label>
@@ -33,7 +32,8 @@
                 <input asp-for="Seller.BaseSalary" class="form-control" />
                 <span asp-validation-for="Seller.BaseSalary" class="text-danger"></span>
             </div>
-            <div class="form-group"> <!--essa divisão é que permite mostrar na tela as informações da Tabela DB secundaria-->
+            <div class="form-group">
+                <!--essa divisão é que permite mostrar na tela as informações da Tabela DB secundaria-->
                 <label asp-for="Seller.DepartmentId" class="control-label"></label>
                 <select asp-for="Seller.DepartmentId" asp-items="@(new SelectList(Model.Departments,"Id","Name"))" class="form-control"></select>
                 <span asp-validation-for="Seller.DepartmentId" class="text-danger"></span>
@@ -48,7 +48,7 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+<!--Essa codificação abaixo habilita o Sumario de Validação aparecer no JavaScript do Usuario-->
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

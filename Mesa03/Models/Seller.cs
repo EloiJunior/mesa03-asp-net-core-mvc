@@ -8,16 +8,24 @@ namespace Mesa03.Models
     {
         //primeiro atributos basicos
         public int Id { get; set; }                  //atributo basico
+
+        [Required(ErrorMessage = "{0} required")]                      //campo requerido, com mensagem de erro
+        [StringLength(60, MinimumLength = 3, ErrorMessage = "{0} size should be {2} and {1}")]  //tamanho do texto: maximo 60, minimo 3, mensagem de erro
         public string Name { get; set; }             //atributo basico
 
+        [Required(ErrorMessage = "{0} required")]                      //campo requerido, com mensagem de erro
+        [EmailAddress(ErrorMessage = "Enter a valid email")]
         [DataType(DataType.EmailAddress)]                             //DataType: muda o tipo de texto para email
         public string Email { get; set; }            //atributo basico
 
+        [Required(ErrorMessage = "{0} required")]                      //campo requerido, com mensagem de erro
         [Display(Name = "Birth Date")]                                //Diplay: muda a apresentação para o que colocarmos entre aspas
         [DataType(DataType.Date)]                                     //muda o tipo de data e hora para somente data mm/dd/aaaa
         [DisplayFormat(DataFormatString = "{0:dd/MMM/yyyy}")]           // muda a apresentação de mm/dd/aaa para dd/mm/aaaa
         public DateTime BirthDate { get; set; }      //atributo basico
 
+        [Required(ErrorMessage = "{0} required")]                      //campo requerido, com mensagem de erro
+        [Range(100.0, 50000.0, ErrorMessage = "{0} must be from {1} to {2}")]
         [Display(Name = "Base Salary")]
         [DisplayFormat(DataFormatString = "{0:F2}")]                     //de valor sem decimais para 2 decimais
         public double BaseSalary { get; set; }       //atributo basico
