@@ -9,6 +9,7 @@ using Mesa03.Models;
 using Mesa03.Services; //para usar SellerService
 using Mesa03.Models.ViewModels; //para usar o ViewModel SellerFormViewModel no Metodo Create Get
 using Mesa03.Services.Exceptions;
+using System.Diagnostics;
 
 namespace Mesa03.Controllers
 {
@@ -62,7 +63,12 @@ namespace Mesa03.Controllers
         {
             if (id == null)
             {
+                /*erro simples
                 return NotFound();
+                */
+
+                //erro personalizado
+                return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
             /*operação criada pelo CRUD vamos transferir para o Serviço
@@ -76,7 +82,8 @@ namespace Mesa03.Controllers
 
             if (seller == null)
             {
-                return NotFound();
+                //return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             return View(seller);
@@ -119,7 +126,8 @@ namespace Mesa03.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                //return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
             /*Operação criada pelo CRUD no Controlador, que vamo transpor para o Serviço
@@ -132,7 +140,8 @@ namespace Mesa03.Controllers
 
             if (seller == null)
             {
-                return NotFound();
+                //return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             /*essa operação foi criada pelo CRUD quando o Seller ainda não tinha SellerFormViewModel fazendo associação com Departamento
@@ -162,8 +171,10 @@ namespace Mesa03.Controllers
                 */
 
                 //mudamos para o erro abaixo
-                return BadRequest();
+                //return BadRequest();
                 //
+
+                return RedirectToAction(nameof(Error), new { message = "Id mismatch" });
             }
 
             try
@@ -179,13 +190,15 @@ namespace Mesa03.Controllers
             }
 
             //não veio no CRUD mas vamos colocar
-            catch (NotFoundException)
+            catch (NotFoundException e)
             {
-                return NotFound();
+                //return NotFound();
+                //erro personalizado voltando a mensagem padrao do framework e.Message
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
             //
 
-            catch (DbConcurrencyException)  //veio do CRUD DbUpdateConcurrencyException, que pegamos no serviço como esse ao lado
+            catch (DbConcurrencyException e)  //veio do CRUD DbUpdateConcurrencyException, que pegamos no serviço como esse ao lado
             {
                 /*Veio no CRUD
                 if (!SellerExists(seller.Id))
@@ -199,7 +212,9 @@ namespace Mesa03.Controllers
                 */
 
                 //porenquanto fizemos como abaixo
-                return BadRequest();
+                //return BadRequest();
+
+                return RedirectToAction(nameof(Error), new { message = e.Message });
                 //
 
             }
@@ -215,13 +230,13 @@ namespace Mesa03.Controllers
 
 
 
-
         // GET: Sellers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                //return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
             //Feito pelo CRUD e alterado para serviço
@@ -236,7 +251,8 @@ namespace Mesa03.Controllers
 
             if (seller == null)
             {
-                return NotFound();
+                //return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             return View(seller);
@@ -261,6 +277,17 @@ namespace Mesa03.Controllers
             //
 
             return RedirectToAction(nameof(Index));
+        }
+
+        //Ação de Erro personalizado
+        public IActionResult Error(string message)
+        {
+            var viewModel = new ErrorViewModel  // instanciar um viewmodel
+            {
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier //macete pra pegar o Id interno da requisição
+            };
+            return View(viewModel);
         }
 
 
