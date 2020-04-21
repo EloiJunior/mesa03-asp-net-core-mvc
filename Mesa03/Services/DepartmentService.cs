@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Mesa03.Models;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks; // para usar o Task<> das operações assincronas
+using Microsoft.EntityFrameworkCore; // para usar o .toListAsync() que vai chamar uma operação do Linq, poi o Linq só prepara, e espera outra ação chama-lo
 
 namespace Mesa03.Services
 {
@@ -31,6 +31,7 @@ namespace Mesa03.Services
         public async Task<List<Department>> FindAllAsync()
         {
             return await _context.Department.OrderBy(x => x.Name).ToListAsync();  //isso vai acessar a minha tabela de dados relacionada a Operadores e me retornar em forma de lista
+                   //await é pra avisar o compilador que vamos usar uma operação assincrona
         }
 
         //metodo personalizado Insert

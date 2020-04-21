@@ -71,8 +71,15 @@ namespace Mesa03.Services
 
         //metodo personalizado UpdateAsync
         public async Task UpdateAsync(Seller obj)
-        {
-            if (! _context.Seller.Any(x => x.Id == obj.Id)) //se "!" não encontrar na tabela Seller nenhum seller que leva ao Id dele, ser igual ao Id do objeto que entrou como argumento
+        { 
+            /*outra forma de escrever o codigo abaixo seria:
+            bool hasAny = await _context.Seller.AnyAsync(x => x.Id == obj.Id);
+            if(!hasAny)
+            {
+            throw new NotFoundException("Id not found");
+            }
+            */
+            if (! await _context.Seller.AnyAsync(x => x.Id == obj.Id)) //se "!" não encontrar na tabela Seller nenhum seller que leva ao Id dele, ser igual ao Id do objeto que entrou como argumento
             {
                 throw new NotFoundException("Id not found"); // apresentar a mensagem de erro
             }                                                 //se passar por esse if

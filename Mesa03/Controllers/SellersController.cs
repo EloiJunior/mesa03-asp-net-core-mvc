@@ -291,7 +291,9 @@ namespace Mesa03.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //Ação de Erro personalizado
+
+
+        //Metodo Ação de Erro personalizado
         public IActionResult Error(string message)
         {
             var viewModel = new ErrorViewModel  // instanciar um viewmodel
