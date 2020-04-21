@@ -54,7 +54,7 @@ namespace Mesa03.Controllers
             return View(await _sellerService.FindAllAsync());
 
         }
-        /*
+        
          //metodo personalizado Details
         // GET: Sellers/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -64,8 +64,15 @@ namespace Mesa03.Controllers
                 return NotFound();
             }
 
+            /*operação criada pelo CRUD vamos transferir para o Serviço
             var seller = await _sellerService.Seller
                 .FirstOrDefaultAsync(m => m.Id == id);
+            */
+
+            //Codigo reescrito para chamar o resultado do Serviço
+            var seller = await _sellerService.FindByIdAsync(id.Value);
+            //
+
             if (seller == null)
             {
                 return NotFound();
@@ -73,7 +80,7 @@ namespace Mesa03.Controllers
 
             return View(seller);
         }
-        */
+        
 
 
         //Metodo personalizado Create Get
