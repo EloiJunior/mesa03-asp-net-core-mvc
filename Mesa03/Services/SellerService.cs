@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mesa03.Models; //para reconhecer o Mesa03Context que esta no namespace Mesa03.Models
+using Mesa03.Services.Exceptions;
 using Microsoft.EntityFrameworkCore; //para usar a operação ".ToListAsync()" na expressão lambda do metodo FindAll, e para usar...
                                      // e para usar o Include(seller => seller.Department), que usaremos para fazer o Join das tabelas
 
@@ -68,7 +69,24 @@ namespace Mesa03.Services
             await _context.SaveChangesAsync();
         }
 
-
+        //metodo personalizado UpdateAsync
+        public async Task UpdateAsync(Seller obj)
+        {
+            if (! _context.Seller.Any(x => x.Id == obj.Id)) //se "!" não encontrar na tabela Seller nenhum seller que leva ao Id dele, ser igual ao Id do objeto que entrou como argumento
+            {
+                throw new NotFoundException("Id not found"); // apresentar a mensagem de erro
+            }                                                 //se passar por esse if
+            try                                               //tentar 
+            {
+                _context.Update(obj);                         //fazer o update
+                await _context.SaveChangesAsync();            //e salvar as mudanças
+            }                                                 //se na etapa anterior der um problema de concorrencia no DB, automaticamente gera um DBUpdateConcurrencyException
+            catch (DbUpdateConcurrencyException e)            //nessa linha estamos testando se houve o problema de concorrencia e se deu pegamos ele
+            {
+                throw new DbConcurrencyException(e.Message);  //salvamos essa mensagem de erro no serviço de erro personalizado que criamos
+            }
+        }
+       
     }
 
 }

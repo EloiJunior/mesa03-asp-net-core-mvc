@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;  //para usar o .ToListAsync() na expressão
 using Mesa03.Models;
 using Mesa03.Services; //para usar SellerService
 using Mesa03.Models.ViewModels; //para usar o ViewModel SellerFormViewModel no Metodo Create Get
+using Mesa03.Services.Exceptions;
 
 namespace Mesa03.Controllers
 {
@@ -35,7 +36,7 @@ namespace Mesa03.Controllers
 
 
         // metodos personalizados do CRUD e tambem criados
-        
+
 
         //metodo personalizado Index
         // GET: Sellers
@@ -54,8 +55,8 @@ namespace Mesa03.Controllers
             return View(await _sellerService.FindAllAsync());
 
         }
-        
-         //metodo personalizado Details
+
+        //metodo personalizado Details
         // GET: Sellers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -80,7 +81,7 @@ namespace Mesa03.Controllers
 
             return View(seller);
         }
-        
+
 
 
         //Metodo personalizado Create Get
@@ -91,7 +92,7 @@ namespace Mesa03.Controllers
             var viewModel = new SellerFormViewModel { Departments = departments };
             return View(viewModel);
         }
-        
+
 
         // POST: Sellers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -111,9 +112,8 @@ namespace Mesa03.Controllers
             }
             return View(seller);
         }
-        /*
-          
-         
+
+
         // GET: Sellers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -122,12 +122,28 @@ namespace Mesa03.Controllers
                 return NotFound();
             }
 
+            /*Operação criada pelo CRUD no Controlador, que vamo transpor para o Serviço
             var seller = await _context.Seller.FindAsync(id);
+            */
+
+            //operação acima chamando do Serviço
+            var seller = await _sellerService.FindByIdAsync(id.Value);
+            //
+
             if (seller == null)
             {
                 return NotFound();
             }
+
+            /*essa operação foi criada pelo CRUD quando o Seller ainda não tinha SellerFormViewModel fazendo associação com Departamento
             return View(seller);
+            */
+
+            //Agora vamos criar abaixo as condições para que seja apresentado para edição do vendedor as opções de departamento tambem
+            List<Department> departments = await _departmentService.FindAllAsync();
+            SellerFormViewModel viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
+            return View(viewModel);
+            //
         }
 
 
@@ -137,36 +153,67 @@ namespace Mesa03.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,BirthDate,BaseSalary")] Seller seller)
+        public async Task<IActionResult> Edit(int id,/* [Bind("Id,Name,Email,BirthDate,BaseSalary")] */Seller seller)
         {
-            if (id != seller.Id)
+            if (id != seller.Id) //se o id que veio da requisição não for o mesmo Id do seller no DB
+            {
+                /*veio do CRUD
+                return NotFound();
+                */
+
+                //mudamos para o erro abaixo
+                return BadRequest();
+                //
+            }
+
+            try
+            {
+                /*Veio do CRUD passamos para o Serviço
+                _context.Update(seller);
+                await _context.SaveChangesAsync();
+                */
+
+                //Chamando a operação acima do Serviço
+                await _sellerService.UpdateAsync(seller);
+                //
+            }
+
+            //não veio no CRUD mas vamos colocar
+            catch (NotFoundException)
             {
                 return NotFound();
             }
+            //
 
-            if (ModelState.IsValid)
+            catch (DbConcurrencyException)  //veio do CRUD DbUpdateConcurrencyException, que pegamos no serviço como esse ao lado
             {
-                try
+                /*Veio no CRUD
+                if (!SellerExists(seller.Id))
                 {
-                    _context.Update(seller);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!SellerExists(seller.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+                */
+
+                //porenquanto fizemos como abaixo
+                return BadRequest();
+                //
+
             }
+            return RedirectToAction(nameof(Index));
+
+
+            /*veio no CRUD
             return View(seller);
+            */
+
         }
-        */
+
+
+
 
 
         // GET: Sellers/Delete/5
@@ -188,16 +235,16 @@ namespace Mesa03.Controllers
             //
 
             if (seller == null)
-
             {
                 return NotFound();
             }
 
             return View(seller);
         }
+    
 
 
-        
+
         // POST: Sellers/Delete/6
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

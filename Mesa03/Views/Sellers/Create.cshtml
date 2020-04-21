@@ -33,7 +33,7 @@
                 <input asp-for="Seller.BaseSalary" class="form-control" />
                 <span asp-validation-for="Seller.BaseSalary" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group"> <!--essa divisão é que permite mostrar na tela as informações da Tabela DB secundaria-->
                 <label asp-for="Seller.DepartmentId" class="control-label"></label>
                 <select asp-for="Seller.DepartmentId" asp-items="@(new SelectList(Model.Departments,"Id","Name"))" class="form-control"></select>
                 <span asp-validation-for="Seller.DepartmentId" class="text-danger"></span>
