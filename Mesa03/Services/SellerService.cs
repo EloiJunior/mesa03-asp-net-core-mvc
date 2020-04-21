@@ -37,7 +37,7 @@ namespace Mesa03.Services
             return await _context.Seller.Include(x => x.Department).OrderBy(x => x.Name).ToListAsync();  //isso vai acessar a minha tabela de dados relacionada a Operadores e me retornar em forma de lista
         }
 
-        //metodo personalizado Insert
+        //metodo personalizado InsertAsync
         public async Task InsertAsync(Seller seller)
         {
             
@@ -64,10 +64,21 @@ namespace Mesa03.Services
         //metodo personalizado RemoveAsync
         public async Task RemoveAsync(int id)
         {
-            var obj =  await _context.Seller.FindAsync(id);
-            _context.Seller.Remove(obj);
-            await _context.SaveChangesAsync();
+            try //criamos esse try e catch, em volta do metodo remove, para capturar qualquer erro de DBUpdateException, que é o erro...
+                //...que o framework retorna quando temos um erro de integridade referencial, pois vamos tratar esse erro como...
+                //...exceção personalizada que criamos na camada de serviço chamada IntegrityException
+            {
+                var obj = await _context.Seller.FindAsync(id);
+                _context.Seller.Remove(obj);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                throw new IntegrityException(e.Message);
+            }
         }
+
+
 
         //metodo personalizado UpdateAsync
         public async Task UpdateAsync(Seller obj)

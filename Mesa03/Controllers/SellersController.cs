@@ -278,17 +278,24 @@ namespace Mesa03.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            /*
+            /*CRUD
             var seller = await _context.Seller.FindAsync(id);
             _context.Seller.Remove(seller);
             await _context.SaveChangesAsync();
             */
 
-            //passando a codificação acima para o Serviço, e chamando a ação do serviço
-            await _sellerService.RemoveAsync(id);
-            //
+            try  // try e catch criado em volta do metodo, para capturar um eventual erro de integridade referencial personalizado
+            {
+                //passando a codificação do CRUD para o Serviço, e chamando a ação do serviço
+                await _sellerService.RemoveAsync(id);
+                //
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch(IntegrityException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message }); //redirecionar pra view de erro com essa exceção
+            }
         }
 
 
