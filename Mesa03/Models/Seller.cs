@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;   //para usar ICollection
 using System.Linq;                  // para usar as funções do Linq no metodo TotalSales
-
+using System.ComponentModel.DataAnnotations; //para usar os displays de anotations, ou formatação
 namespace Mesa03.Models
 {
     public class Seller
@@ -9,8 +9,17 @@ namespace Mesa03.Models
         //primeiro atributos basicos
         public int Id { get; set; }                  //atributo basico
         public string Name { get; set; }             //atributo basico
+
+        [DataType(DataType.EmailAddress)]                             //DataType: muda o tipo de texto para email
         public string Email { get; set; }            //atributo basico
+
+        [Display(Name = "Birth Date")]                                //Diplay: muda a apresentação para o que colocarmos entre aspas
+        [DataType(DataType.Date)]                                     //muda o tipo de data e hora para somente data mm/dd/aaaa
+        [DisplayFormat(DataFormatString = "{0:dd/MMM/yyyy}")]           // muda a apresentação de mm/dd/aaa para dd/mm/aaaa
         public DateTime BirthDate { get; set; }      //atributo basico
+
+        [Display(Name = "Base Salary")]
+        [DisplayFormat(DataFormatString = "{0:F2}")]                     //de valor sem decimais para 2 decimais
         public double BaseSalary { get; set; }       //atributo basico
 
         //segundo associações

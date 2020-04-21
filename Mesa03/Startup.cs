@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Mesa03.Models;
 using Mesa03.Services; //para usar classe SellerService no registro do SellerService no sistema de injeção de dependencia
+using System.Globalization;//para poder usar as funções de cultura
+using Microsoft.AspNetCore.Localization; // para poder definir a localização da aplicação, embaixo no metodo Configure vamos definir como EUA que é a mais generica
 
 namespace Mesa03
 {
@@ -47,6 +49,20 @@ namespace Mesa03
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            //definindo o Locale da aplicação como sendo dos EUA
+            var enUS = new CultureInfo("en-US");
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(enUS),  // qual vai ser o locale padrao da aplicação
+                SupportedCultures = new List<CultureInfo> { enUS }, //quais são os locales possiveis da aplicação
+                SupportedUICultures = new List<CultureInfo> { enUS } 
+
+            };
+
+            app.UseRequestLocalization(localizationOptions);
+            //
+       
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
