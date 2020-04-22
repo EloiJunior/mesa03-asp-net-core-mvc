@@ -6,40 +6,76 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Mesa03.Models;
+using Mesa03.Services; //para usar o SalesRecordService
 
 namespace Mesa03.Controllers
 {
     public class SalesRecordsController : Controller
     {
-        //Framework
+        /*Framework, declaração de dependencia do context do Db, passamos para o serviço
         private readonly Mesa03Context _context;
-        
+        */
 
-        //Framework
+        //Ao invés disso temos que fazer declaração de dependencia com o serviço
+        private readonly SalesRecordService _salesRecordService;
+        //              //Serviço Usado    //nome da variavel que vamos dar
+
+        /*Framework, construtor da dependencia, passamos para o serviço
         public SalesRecordsController(Mesa03Context context)
         {
             _context = context;
         }
-        
+        */
 
+        //ao inves disso temos que fazer um construtor de dependencia com o serviço
+        public SalesRecordsController(SalesRecordService salesRecordService)
+        {
+            _salesRecordService = salesRecordService;
+        }
+        //
+
+        
         // GET: SalesRecords // Framework
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SalesRecord.ToListAsync());
+            return View();
         }
+        
 
         // GET: SalesRecords // Personalizado
-        public async Task<IActionResult> SimpleSearch()
+        public async Task<IActionResult> SimpleSearch(DateTime? minDate, DateTime? maxDate)
         {
-            return View(await _context.SalesRecord.ToListAsync());
+            //A operação comentada já retornaria sozinha o resultado, mas vamos criar um macete para mandar tambem a minDate e maxDate que chegaram no argumento para a tela de resposta
+            //primeiro, vamos formatar que: se não entrar no argumento o minDate, vamos definir o primeiro dia do ano como minDate
+            if (!minDate.HasValue)
+            {
+                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+            }
+            //segundo, vamos formatar que: se não entrar no argumento o maxDate, vamos definir o dia de hoje como maxDate
+            if (!maxDate.HasValue)
+            {
+                maxDate = DateTime.Now;
+            }
+            //terceiro, vamos passar o minDate e maxDate utilizado no filtro, na view tela de resposta do SimpleSearch,...
+            //...utilizando o dicionario ViewData
+            ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
+            ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
+
+            //essa operação sozinha já mandaria o resultado para a view
+            return View(await _salesRecordService.FindByDateAsync(minDate, maxDate));
+            //
         }
 
+
+        /*
         // GET: SalesRecords // Personalizado
         public async Task<IActionResult> GroupingSearch()
         {
-            return View(await _context.SalesRecord.ToListAsync());
+            return View(await _salesRecordService.ToListAsync());
         }
+        */
 
+        /*
         // GET: SalesRecords/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -57,7 +93,9 @@ namespace Mesa03.Controllers
 
             return View(salesRecord);
         }
+        */
 
+        /*
         // GET: SalesRecords/Create
         public IActionResult Create()
         {
@@ -79,7 +117,9 @@ namespace Mesa03.Controllers
             }
             return View(salesRecord);
         }
+        */
 
+        /*
         // GET: SalesRecords/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -95,7 +135,10 @@ namespace Mesa03.Controllers
             }
             return View(salesRecord);
         }
+        */
 
+
+        /*
         // POST: SalesRecords/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -130,7 +173,9 @@ namespace Mesa03.Controllers
             }
             return View(salesRecord);
         }
+        */
 
+        /*
         // GET: SalesRecords/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -148,7 +193,9 @@ namespace Mesa03.Controllers
 
             return View(salesRecord);
         }
+        */
 
+        /*
         // POST: SalesRecords/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -159,10 +206,13 @@ namespace Mesa03.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        */
 
+        /*
         private bool SalesRecordExists(int id)
         {
             return _context.SalesRecord.Any(e => e.Id == id);
         }
+        */
     }
 }
