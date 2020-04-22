@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Mesa03.Models.Enums;
 
 namespace Mesa03.Models
@@ -7,7 +8,11 @@ namespace Mesa03.Models
     {
         //primeiro atributos basicos
         public int Id { get; set; }               //atributo basico
+
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"]
         public DateTime Date { get; set; }        //atributo basico
+
+        [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Amount { get; set; }        //atributo basico
         public SaleStatus Status { get; set; }    //atributo basico
 

@@ -57,6 +57,41 @@ namespace Mesa03.Services
                 .ToListAsync();                      //transformando essa variavel em lista para apresentar uma List<SalesRecord>
 
         }
+        
+        
+        
+        //Metodo personalizado FindByDateGroupingAsync, GET
+        public async Task<List<IGrouping<Department,SalesRecord>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
+        {                     //qdo agrupamos não será mais uma lista de SalesRecord, mas sim uma lista de IGrouping de SalesRecord por Departamento
+            //construir um objeto IQueryable, que é o objeto que podemos construir as consultas em cima dele, a partir do Db context do SalesRecord
+            var result = from obj in _context.SalesRecord select obj; //de um objeto DbSet do context, seleciona transformando esse objeto em um objeto IQueryable
+
+            //Agora que tenho uma variavel IQueryable, podemos acrescentar outros detalhes na consulta
+            if (minDate.HasValue) // se no argumento de entrada tiver uma data minima
+            {
+                result = result.Where(x => x.Date >= minDate.Value); //eu pego a variavel criada, e filtro, solicitando que pegue os objetos x => que tenham data => maior ou igual, ao minDate que chegou no argumento, trazendo os Value(conteudo) desses objetos filtrados
+            }
+
+            if (maxDate.HasValue) // se no argumento de entrada tiver uma data maxima
+            {
+                result = result.Where(x => x.Date <= maxDate.Value); //eu pego a variavel criada, e filtro, solicitando que pegue os objetos x => que tenham data => menor ou igual, ao maxDate que chegou no argumento, trazendo os Value(conteudo) desses objetos filtrados
+            }
+
+            /*Essa ação retornaria a lista para a View, só que como vamos um Join com a tabela de vendedor e tambem com a tabela de Departamento, vai ficar somente como didatica
+            return result.ToList();
+            */
+
+            //vai ficar assim:
+            return await result                       //retorna a variavel lista filtrada pelos criterios acima
+                .Include(x => x.Seller)              //em cada objeto x dessa lista faz um join com o vendedor da tabela Seller
+                .Include(x => x.Seller.Department)   //em cada objeto x dessa lista com o join do vendedor, faz outro join com o departamento desse vendedor da tabela Department                                 
+                .OrderByDescending(x => x.Date)      //agora que a variavel esta completa, ordena os objetos pela data dos objetos
+                .GroupBy(x => x.Seller.Department)   //agrupando os resultado por departamentos dos vendedores da lista
+                .ToListAsync();                      //transformando essa variavel em lista para apresentar uma List<SalesRecord>
+
+        }
+
+
 
         /*
         // GET: SalesRecords/Details/5

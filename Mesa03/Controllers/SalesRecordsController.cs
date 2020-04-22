@@ -67,13 +67,32 @@ namespace Mesa03.Controllers
         }
 
 
-        /*
+        
         // GET: SalesRecords // Personalizado
-        public async Task<IActionResult> GroupingSearch()
+        public async Task<IActionResult> GroupingSearch(DateTime? minDate, DateTime? maxDate)
         {
-            return View(await _salesRecordService.ToListAsync());
+            //A operação comentada já retornaria sozinha o resultado, mas vamos criar um macete para mandar tambem a minDate e maxDate que chegaram no argumento para a tela de resposta
+            //primeiro, vamos formatar que: se não entrar no argumento o minDate, vamos definir o primeiro dia do ano como minDate
+            if (!minDate.HasValue)
+            {
+                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+            }
+            //segundo, vamos formatar que: se não entrar no argumento o maxDate, vamos definir o dia de hoje como maxDate
+            if (!maxDate.HasValue)
+            {
+                maxDate = DateTime.Now;
+            }
+            //terceiro, vamos passar o minDate e maxDate utilizado no filtro, na view tela de resposta do SimpleSearch,...
+            //...utilizando o dicionario ViewData
+            ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
+            ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
+
+            //essa operação sozinha já mandaria o resultado para a view
+            return View(await _salesRecordService.FindByDateGroupingAsync(minDate, maxDate));
+            //
+            
         }
-        */
+        
 
         /*
         // GET: SalesRecords/Details/5
